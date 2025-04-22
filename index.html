@@ -51,19 +51,14 @@
           image: form.image.value.trim()
         };
 
-        fetch('https://script.google.com/macros/s/AKfycbyuve6wNbp7ju3fRC-i8CnSG_UGji22j_iQ2n8hoSHRMJ1N-YuUoGF5kFVpmm0qUP2lLw/exec', {
+        fetch('https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(data)
         })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('เกิดข้อผิดพลาด: ' + response.statusText);
-          }
-          return response.text();
-        })
+        .then(response => response.text())
         .then(() => {
           const msg = document.getElementById('msg');
           msg.classList.remove('hidden');
