@@ -39,76 +39,76 @@
 
     <script>
       // ฟอร์มส่งข้อมูลไปยัง Web App
-      document.getElementById('productForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+  document.getElementById('productForm').addEventListener('submit', function (e) {
+    e.preventDefault();
 
-        const form = e.target;
-        const data = {
-          name: form.name.value.trim(),
-          description: form.description.value.trim(),
-          price: form.price.value.trim(),
-          category: form.category.value.trim(),
-          image: form.image.value.trim()
-        };
+    const form = e.target;
+    const data = {
+      apiKey: 'AKfycbz9pa9q6T8mM3X2SeeT7JfTV5TMJxmdWxyrW-XM_mdt', // เพิ่ม API key เข้าไปใน body
+      name: form.name.value.trim(),
+      description: form.description.value.trim(),
+      price: form.price.value.trim(),
+      category: form.category.value.trim(),
+      image: form.image.value.trim()
+    };
 
-        fetch('https://script.google.com/macros/s/AKfycbxs9_E88U2YyixlZJh_gjOEymIDLG2QITky0WfXS7m2euSVkQCixQtadTDqqxuINBm71w/exec', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }).then(() => {
-          const msg = document.getElementById('msg');
-          msg.classList.remove('hidden');
-          form.reset();
+    fetch('https://script.google.com/macros/s/AKfycbxs9_E88U2YyixlZJh_gjOEymIDLG2QITky0WfXS7m2euSVkQCixQtadTDqqxuINBm71w/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(() => {
+      const msg = document.getElementById('msg');
+      msg.classList.remove('hidden');
+      form.reset();
 
-          setTimeout(() => {
-            msg.classList.add('hidden');
-            fetchCSV(); // รีโหลดตารางใหม่
-          }, 3000);
-        }).catch(error => {
-          console.error('เกิดข้อผิดพลาด:', error);
-        });
+      setTimeout(() => {
+        msg.classList.add('hidden');
+        fetchCSV(); // รีโหลดตารางใหม่
+      }, 3000);
+    }).catch(error => {
+      console.error('เกิดข้อผิดพลาด:', error);
+    });
+  });
+
+  // ดึงข้อมูลจาก Google Sheet ที่เผยแพร่แบบ CSV
+  async function fetchCSV() {
+    const response = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQsNJ5QINNuD29AG1DkGlYdkpQ4N4AYinwSOUfR8qtOMH5DI54aYgzwIiNLYXvd6lmGnfH1arNbo9Mu/pub?gid=0&single=true&output=csv");
+    const csvText = await response.text();
+    const rows = csvText.trim().split('\n').map(row => row.split(','));
+    const table = document.getElementById('sheetTable');
+    table.innerHTML = '';
+
+    // สร้างหัวตาราง
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    rows[0].forEach(headerText => {
+      const th = document.createElement('th');
+      th.textContent = headerText;
+      th.className = "border p-2 bg-gray-200";
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // สร้างแถวข้อมูล
+    const tbody = document.createElement('tbody');
+    rows.slice(1).forEach(row => {
+      const tr = document.createElement('tr');
+      row.forEach(cell => {
+        const td = document.createElement('td');
+        td.textContent = cell;
+        td.className = "border p-2";
+        tr.appendChild(td);
       });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+  }
 
-      // ดึงข้อมูลจาก Google Sheet ที่เผยแพร่แบบ CSV
-      async function fetchCSV() {
-        const response = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQsNJ5QINNuD29AG1DkGlYdkpQ4N4AYinwSOUfR8qtOMH5DI54aYgzwIiNLYXvd6lmGnfH1arNbo9Mu/pub?gid=0&single=true&output=csv");
-        const csvText = await response.text();
-        const rows = csvText.trim().split('\n').map(row => row.split(','));
-        const table = document.getElementById('sheetTable');
-        table.innerHTML = '';
-
-        // สร้างหัวตาราง
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-        rows[0].forEach(headerText => {
-          const th = document.createElement('th');
-          th.textContent = headerText;
-          th.className = "border p-2 bg-gray-200";
-          headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-
-        // สร้างแถวข้อมูล
-        const tbody = document.createElement('tbody');
-        rows.slice(1).forEach(row => {
-          const tr = document.createElement('tr');
-          row.forEach(cell => {
-            const td = document.createElement('td');
-            td.textContent = cell;
-            td.className = "border p-2";
-            tr.appendChild(td);
-          });
-          tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-      }
-
-      // โหลดข้อมูลทันทีเมื่อเปิดหน้า
-      fetchCSV();
+  // โหลดข้อมูลทันทีเมื่อเปิดหน้า
+  fetchCSV();
     </script>
   </body>
 </html>
