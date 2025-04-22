@@ -35,6 +35,39 @@
     </div>
 
     <script>
+        document.getElementById('productForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // ป้องกันการรีเฟรชหน้า
+
+    const form = e.target;
+    const data = {
+      name: form.name.value.trim(),
+      description: form.description.value.trim(),
+      price: form.price.value.trim(),
+      category: form.category.value.trim(),
+      image: form.image.value.trim()
+    };
+
+    fetch('https://script.google.com/macros/library/d/1GnukuxtNk7hzB6pAUO0Q5mN70o3dEXmH1es1PenEm2Z84KCZec0fVCnW/1', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(() => {
+      document.getElementById('msg').classList.remove('hidden');
+
+      // เคลียร์ฟอร์ม
+      form.reset();
+
+      // ซ่อนข้อความหลัง 3 วินาที
+      setTimeout(() => {
+        document.getElementById('msg').classList.add('hidden');
+      }, 3000);
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+  });
       const form = document.getElementById("productForm");
       const msg = document.getElementById("msg");
 
